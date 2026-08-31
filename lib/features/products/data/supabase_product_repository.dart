@@ -11,7 +11,7 @@ class SupabaseProductRepository implements ProductRepository {
   String get _ownerId {
     final user = _client.auth.currentUser;
     if (user == null) {
-      throw const AuthException(
+      throw AuthException(
         'No authenticated Supabase session. Please restart the app.',
       );
     }
