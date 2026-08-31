@@ -8,6 +8,16 @@ class SupabaseProductRepository implements ProductRepository {
 
   final SupabaseClient _client;
 
+  String get _ownerId {
+    final user = _client.auth.currentUser;
+    if (user == null) {
+      throw const AuthException(
+        'No authenticated Supabase session. Please restart the app.',
+      );
+    }
+    return user.id;
+  }
+
   Product _fromRow(Map<String, dynamic> row) {
     return Product(
       id: row['id'].toString(),
@@ -16,7 +26,7 @@ class SupabaseProductRepository implements ProductRepository {
       category: row['category'] as String?,
       unit: row['unit'] as String,
       costPrice: (row['cost_price'] as num?)?.toDouble(),
-      sellingPrice: (row['selling_price'] as num?)?.toDouble() ?? 0,
+      sellingPrice: (row['selling_price'] as num?)?.toDouble(),
       active: (row['active'] as bool?) ?? true,
       notes: row['notes'] as String?,
     );
@@ -24,9 +34,12 @@ class SupabaseProductRepository implements ProductRepository {
 
   @override
   Future<List<Product>> getProducts() async {
+    final ownerId = _ownerId;
+
     final response = await _client
         .from('products')
         .select()
+        .eq('owner_id', ownerId)
         .order('name');
 
     return (response as List)
@@ -44,9 +57,12 @@ class SupabaseProductRepository implements ProductRepository {
     String? unit,
     String? notes,
   }) async {
+    final ownerId = _ownerId;
+
     final response = await _client
         .from('products')
         .insert({
+          'owner_id': ownerId,
           'name': name,
           'selling_price': sellingPrice,
           'cost_price': costPrice,
@@ -73,6 +89,8 @@ class SupabaseProductRepository implements ProductRepository {
     String? unit,
     String? notes,
   }) async {
+    final ownerId = _ownerId;
+
     final response = await _client
         .from('products')
         .update({
@@ -85,6 +103,7 @@ class SupabaseProductRepository implements ProductRepository {
           'notes': notes,
         })
         .eq('id', id)
+        .eq('owner_id', ownerId)
         .select()
         .single();
 
@@ -96,9 +115,12 @@ class SupabaseProductRepository implements ProductRepository {
     required String id,
     required bool active,
   }) async {
+    final ownerId = _ownerId;
+
     await _client
         .from('products')
         .update({'active': active})
-        .eq('id', id);
+        .eq('id', id)
+        .eq('owner_id', ownerId);
   }
 }
