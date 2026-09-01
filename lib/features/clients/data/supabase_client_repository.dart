@@ -78,7 +78,7 @@ class SupabaseClientRepository {
 
   String _requireUserId() {
     final user = _client.auth.currentUser;
-    if (user == null) throw const AuthException('No authenticated Supabase session.');
+    if (user == null) throw AuthException('No authenticated Supabase session.');
     return user.id;
   }
 }
