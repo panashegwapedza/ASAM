@@ -76,6 +76,9 @@ class _ProductsPageState extends State<ProductsPage> {
         context: context,
         barrierDismissible: false,
         builder: (dialogContext) {
+          final screenHeight = MediaQuery.sizeOf(dialogContext).height;
+          final maxDialogHeight = (screenHeight - 96).clamp(320.0, 680.0);
+
           return StatefulBuilder(
             builder: (context, setDialogState) {
               Future<void> save() async {
@@ -86,13 +89,24 @@ class _ProductsPageState extends State<ProductsPage> {
                 final sellingPrice = double.tryParse(
                   sellingController.text.trim(),
                 );
+                final costPrice = double.tryParse(costController.text.trim());
 
                 if (name.isEmpty || unit.isEmpty || sellingPrice == null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  ScaffoldMessenger.of(dialogContext).showSnackBar(
                     const SnackBar(
                       content: Text(
                         'Enter a product name, unit and valid selling price.',
                       ),
+                    ),
+                  );
+                  return;
+                }
+
+                if (costController.text.trim().isNotEmpty &&
+                    costPrice == null) {
+                  ScaffoldMessenger.of(dialogContext).showSnackBar(
+                    const SnackBar(
+                      content: Text('Enter a valid cost price or leave it blank.'),
                     ),
                   );
                   return;
@@ -106,7 +120,7 @@ class _ProductsPageState extends State<ProductsPage> {
                     unit: unit,
                     sku: _nullable(skuController.text),
                     category: _nullable(categoryController.text),
-                    costPrice: double.tryParse(costController.text.trim()),
+                    costPrice: costPrice,
                     sellingPrice: sellingPrice,
                     notes: _nullable(notesController.text),
                   );
@@ -138,7 +152,10 @@ class _ProductsPageState extends State<ProductsPage> {
                 title: const Text('Add Product'),
                 content: SizedBox(
                   width: 520,
+                  height: maxDialogHeight,
                   child: SingleChildScrollView(
+                    keyboardDismissBehavior:
+                        ScrollViewKeyboardDismissBehavior.onDrag,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -244,6 +261,9 @@ class _ProductsPageState extends State<ProductsPage> {
     if (error.message.trim().isNotEmpty) parts.add(error.message.trim());
     if (error.details?.toString().trim().isNotEmpty == true) {
       parts.add(error.details.toString().trim());
+    }
+    if (error.hint?.toString().trim().isNotEmpty == true) {
+      parts.add(error.hint.toString().trim());
     }
     if (error.code.trim().isNotEmpty) parts.add('code ${error.code}');
     return parts.isEmpty ? 'Supabase request failed.' : parts.join(' — ');
