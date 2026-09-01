@@ -50,9 +50,7 @@ class _AuthPageState extends State<AuthPage> {
         );
         if (!mounted) return;
         if (response.session == null) {
-          _showMessage(
-            'Account created. Check your email to confirm the account, then return to ASAM.',
-          );
+          _showMessage('Account created. Check your email to confirm the account, then return to ASAM.');
         }
       } else {
         await _client.auth.signInWithPassword(
@@ -72,20 +70,15 @@ class _AuthPageState extends State<AuthPage> {
   Future<void> _claimWorkspace() async {
     final user = _client.auth.currentUser;
     if (user == null || !user.isAnonymous) {
-      throw const AuthException('The temporary ASAM workspace is no longer available.');
+      throw AuthException('The temporary ASAM workspace is no longer available.');
     }
 
-    // Linking the email identity keeps the anonymous user's UUID. That means
-    // existing owner-scoped products, clients, and orders remain attached to
-    // this workspace instead of being stranded under a new user.
     await _client.auth.updateUser(
       UserAttributes(email: _email.text.trim()),
     );
 
     if (!mounted) return;
-    _showMessage(
-      'Confirmation email sent. Open it to secure this workspace. Your existing ASAM data will stay attached to this account.',
-    );
+    _showMessage('Confirmation email sent. Open it to secure this workspace. Your existing ASAM data will stay attached to this account.');
   }
 
   void _showMessage(String message, {bool error = false}) {
@@ -127,10 +120,7 @@ class _AuthPageState extends State<AuthPage> {
                         Text(subtitle),
                         if (claim) ...[
                           const SizedBox(height: 16),
-                          const Text(
-                            'Important: do not clear this browser/device session until the email is confirmed.',
-                            style: TextStyle(fontWeight: FontWeight.w600),
-                          ),
+                          const Text('Important: do not clear this browser/device session until the email is confirmed.', style: TextStyle(fontWeight: FontWeight.w600)),
                         ],
                         const SizedBox(height: 24),
                         TextFormField(
@@ -138,10 +128,7 @@ class _AuthPageState extends State<AuthPage> {
                           enabled: !_busy,
                           keyboardType: TextInputType.emailAddress,
                           autofillHints: const [AutofillHints.email],
-                          decoration: const InputDecoration(
-                            labelText: 'Email',
-                            prefixIcon: Icon(Icons.email_outlined),
-                          ),
+                          decoration: const InputDecoration(labelText: 'Email', prefixIcon: Icon(Icons.email_outlined)),
                           validator: (value) {
                             final email = value?.trim() ?? '';
                             if (email.isEmpty || !email.contains('@')) return 'Enter a valid email address.';
@@ -163,10 +150,7 @@ class _AuthPageState extends State<AuthPage> {
                                 icon: Icon(_obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined),
                               ),
                             ),
-                            validator: (value) {
-                              if ((value ?? '').length < 8) return 'Password must be at least 8 characters.';
-                              return null;
-                            },
+                            validator: (value) => (value ?? '').length < 8 ? 'Password must be at least 8 characters.' : null,
                           ),
                           if (_signUp) ...[
                             const SizedBox(height: 12),
@@ -174,10 +158,7 @@ class _AuthPageState extends State<AuthPage> {
                               controller: _confirmPassword,
                               enabled: !_busy,
                               obscureText: _obscure,
-                              decoration: const InputDecoration(
-                                labelText: 'Confirm password',
-                                prefixIcon: Icon(Icons.lock_reset_outlined),
-                              ),
+                              decoration: const InputDecoration(labelText: 'Confirm password', prefixIcon: Icon(Icons.lock_reset_outlined)),
                               validator: (value) => value != _password.text ? 'Passwords do not match.' : null,
                             ),
                           ],
