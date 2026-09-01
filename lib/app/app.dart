@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../features/clients/presentation/clients_page.dart';
 import '../features/dashboard/presentation/dashboard_page.dart';
+import '../features/orders/presentation/orders_page.dart';
 import '../features/products/presentation/products_page.dart';
 import 'theme/app_theme.dart';
 
@@ -33,6 +34,7 @@ class _AsamShellState extends State<AsamShell> {
     DashboardPage(),
     ProductsPage(),
     ClientsPage(),
+    OrdersPage(),
   ];
 
   @override
@@ -46,6 +48,7 @@ class _AsamShellState extends State<AsamShell> {
           NavigationDestination(icon: Icon(Icons.dashboard_outlined), selectedIcon: Icon(Icons.dashboard), label: 'Dashboard'),
           NavigationDestination(icon: Icon(Icons.inventory_2_outlined), selectedIcon: Icon(Icons.inventory_2), label: 'Products'),
           NavigationDestination(icon: Icon(Icons.people_outline), selectedIcon: Icon(Icons.people), label: 'Clients'),
+          NavigationDestination(icon: Icon(Icons.shopping_cart_outlined), selectedIcon: Icon(Icons.shopping_cart), label: 'Orders'),
         ],
       ),
     );
