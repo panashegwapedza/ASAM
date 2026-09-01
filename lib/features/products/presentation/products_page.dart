@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../clients/data/supabase_client_repository.dart';
+import '../../clients/domain/entities/client.dart';
+import '../../orders/data/supabase_order_repository.dart';
+import '../../orders/domain/entities/order.dart';
 import '../data/supabase_product_repository.dart';
 import '../domain/entities/product.dart';
 
@@ -58,6 +62,163 @@ class _ProductsPageState extends State<ProductsPage> {
         _error = error.toString();
         _loading = false;
       });
+    }
+  }
+
+  Future<void> _quickOrder(Product product) async {
+    final clientsRepository = SupabaseClientRepository(Supabase.instance.client);
+    final ordersRepository = SupabaseOrderRepository(Supabase.instance.client);
+
+    try {
+      final clients = await clientsRepository.getClients();
+      if (!mounted) return;
+
+      if (clients.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Add a client before placing an order.')),
+        );
+        return;
+      }
+
+      final quantityController = TextEditingController(text: '1');
+      Client selectedClient = clients.first;
+
+      try {
+        final saved = await showDialog<bool>(
+          context: context,
+          barrierDismissible: false,
+          builder: (dialogContext) {
+            var saving = false;
+
+            return StatefulBuilder(
+              builder: (context, setDialogState) {
+                Future<void> save() async {
+                  if (saving) return;
+                  final quantity = double.tryParse(quantityController.text.trim());
+                  if (quantity == null || quantity <= 0) {
+                    ScaffoldMessenger.of(dialogContext).showSnackBar(
+                      const SnackBar(content: Text('Enter a quantity greater than zero.')),
+                    );
+                    return;
+                  }
+
+                  setDialogState(() => saving = true);
+                  try {
+                    await ordersRepository.createOrder(
+                      clientId: selectedClient.id,
+                      orderDate: DateTime.now(),
+                      items: [
+                        OrderItem(
+                          productId: product.id,
+                          productName: product.name,
+                          quantity: quantity,
+                          unitPrice: product.sellingPrice ?? 0,
+                        ),
+                      ],
+                      status: 'completed',
+                    );
+
+                    if (dialogContext.mounted) {
+                      Navigator.of(dialogContext).pop(true);
+                    }
+                  } catch (error) {
+                    if (!dialogContext.mounted) return;
+                    setDialogState(() => saving = false);
+                    ScaffoldMessenger.of(dialogContext).showSnackBar(
+                      SnackBar(content: Text(_errorMessage(error))),
+                    );
+                  }
+                }
+
+                return AlertDialog(
+                  title: Text('Order ${product.name}'),
+                  content: SizedBox(
+                    width: 460,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        DropdownButtonFormField<Client>(
+                          value: selectedClient,
+                          items: clients
+                              .map(
+                                (client) => DropdownMenuItem<Client>(
+                                  value: client,
+                                  child: Text(client.name),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: saving
+                              ? null
+                              : (client) {
+                                  if (client != null) {
+                                    setDialogState(() => selectedClient = client);
+                                  }
+                                },
+                          decoration: const InputDecoration(labelText: 'Client'),
+                        ),
+                        const SizedBox(height: 12),
+                        TextField(
+                          controller: quantityController,
+                          enabled: !saving,
+                          autofocus: true,
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          decoration: InputDecoration(
+                            labelText: 'Quantity',
+                            suffixText: product.unit,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            'Total: ${((product.sellingPrice ?? 0) * (double.tryParse(quantityController.text) ?? 1)).toStringAsFixed(2)}',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: saving
+                          ? null
+                          : () => Navigator.of(dialogContext).pop(false),
+                      child: const Text('Cancel'),
+                    ),
+                    FilledButton.icon(
+                      onPressed: saving ? null : save,
+                      icon: saving
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.shopping_cart_checkout),
+                      label: Text(saving ? 'Saving…' : 'Place Order'),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        );
+
+        if (saved == true && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Order placed for ${product.name}.')),
+          );
+        }
+      } finally {
+        quantityController.dispose();
+      }
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(_errorMessage(error))),
+        );
+      }
     }
   }
 
@@ -270,6 +431,12 @@ class _ProductsPageState extends State<ProductsPage> {
     return parts.isEmpty ? 'Supabase request failed.' : parts.join(' — ');
   }
 
+  String _errorMessage(Object error) {
+    if (error is PostgrestException) return _postgrestMessage(error);
+    if (error is AuthException) return error.message;
+    return error.toString();
+  }
+
   String _price(Product product) {
     final price = product.sellingPrice;
     return price == null ? 'Price not set' : price.toStringAsFixed(2);
@@ -347,6 +514,8 @@ class _ProductsPageState extends State<ProductsPage> {
         itemCount: _products.length,
         itemBuilder: (context, index) {
           final product = _products[index];
+          final canOrder = product.active && product.sellingPrice != null;
+
           return Card(
             margin: const EdgeInsets.only(bottom: 12),
             child: ListTile(
@@ -360,10 +529,22 @@ class _ProductsPageState extends State<ProductsPage> {
                 '${product.category ?? 'Uncategorised'} • '
                 '${product.unit} • Price: ${_price(product)}',
               ),
-              trailing: Icon(
-                product.active
-                    ? Icons.check_circle_outline
-                    : Icons.pause_circle_outline,
+              trailing: Wrap(
+                spacing: 8,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  if (canOrder)
+                    OutlinedButton.icon(
+                      onPressed: () => _quickOrder(product),
+                      icon: const Icon(Icons.shopping_cart_outlined),
+                      label: const Text('Order'),
+                    ),
+                  Icon(
+                    product.active
+                        ? Icons.check_circle_outline
+                        : Icons.pause_circle_outline,
+                  ),
+                ],
               ),
             ),
           );
