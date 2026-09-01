@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../features/clients/presentation/clients_page.dart';
 import '../features/dashboard/presentation/dashboard_page.dart';
 import '../features/products/presentation/products_page.dart';
 import 'theme/app_theme.dart';
@@ -31,6 +32,7 @@ class _AsamShellState extends State<AsamShell> {
   final List<Widget> _pages = const [
     DashboardPage(),
     ProductsPage(),
+    ClientsPage(),
   ];
 
   @override
@@ -39,22 +41,11 @@ class _AsamShellState extends State<AsamShell> {
       body: _pages[_selectedIndex],
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
-        onDestinationSelected: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
+        onDestinationSelected: (index) => setState(() => _selectedIndex = index),
         destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.dashboard_outlined),
-            selectedIcon: Icon(Icons.dashboard),
-            label: 'Dashboard',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.inventory_2_outlined),
-            selectedIcon: Icon(Icons.inventory_2),
-            label: 'Products',
-          ),
+          NavigationDestination(icon: Icon(Icons.dashboard_outlined), selectedIcon: Icon(Icons.dashboard), label: 'Dashboard'),
+          NavigationDestination(icon: Icon(Icons.inventory_2_outlined), selectedIcon: Icon(Icons.inventory_2), label: 'Products'),
+          NavigationDestination(icon: Icon(Icons.people_outline), selectedIcon: Icon(Icons.people), label: 'Clients'),
         ],
       ),
     );
