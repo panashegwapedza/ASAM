@@ -265,7 +265,8 @@ class _ProductsPageState extends State<ProductsPage> {
     if (error.hint?.toString().trim().isNotEmpty == true) {
       parts.add(error.hint.toString().trim());
     }
-    if (error.code.trim().isNotEmpty) parts.add('code ${error.code}');
+    final code = error.code?.trim();
+    if (code != null && code.isNotEmpty) parts.add('code $code');
     return parts.isEmpty ? 'Supabase request failed.' : parts.join(' — ');
   }
 
