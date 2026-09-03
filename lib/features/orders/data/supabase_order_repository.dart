@@ -40,6 +40,22 @@ class SupabaseOrderRepository {
     }).toList();
   }
 
+  Future<void> updateOrderStatus({
+    required String orderId,
+    required String status,
+  }) async {
+    const allowed = {'draft', 'confirmed', 'processing', 'completed', 'cancelled'};
+    if (!allowed.contains(status)) {
+      throw ArgumentError('Unsupported order status: $status');
+    }
+
+    await _client
+        .from('orders')
+        .update({'status': status})
+        .eq('id', orderId)
+        .eq('owner_id', _ownerId);
+  }
+
   Future<AsamOrder> createOrder({
     required String clientId,
     required DateTime orderDate,
