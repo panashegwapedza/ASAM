@@ -84,6 +84,17 @@ class _OrdersPageState extends State<OrdersPage> {
     }
   }
 
+  Future<void> _changeStatus(AsamOrder order, String status) async {
+    try {
+      await _orders.updateOrderStatus(orderId: order.id, status: status);
+      if (!mounted) return;
+      _snack('Order status updated to ${_statusLabel(status)}.');
+      await _loadOrders();
+    } catch (error) {
+      if (mounted) _snack(_errorMessage(error));
+    }
+  }
+
   void _snack(String message) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
@@ -91,6 +102,26 @@ class _OrdersPageState extends State<OrdersPage> {
   String _errorMessage(Object error) => error is PostgrestException && error.message.trim().isNotEmpty
       ? error.message
       : error.toString();
+
+  String _statusLabel(String status) {
+    switch (status) {
+      case 'draft': return 'Draft';
+      case 'confirmed': return 'Confirmed';
+      case 'processing': return 'Processing';
+      case 'completed': return 'Completed';
+      case 'cancelled': return 'Cancelled';
+      default: return status;
+    }
+  }
+
+  List<String> _nextStatuses(String status) {
+    switch (status) {
+      case 'draft': return const ['confirmed', 'cancelled'];
+      case 'confirmed': return const ['processing', 'cancelled'];
+      case 'processing': return const ['completed', 'cancelled'];
+      default: return const [];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -135,12 +166,23 @@ class _OrdersPageState extends State<OrdersPage> {
         separatorBuilder: (_, __) => const SizedBox(height: 8),
         itemBuilder: (_, index) {
           final order = _ordersList[index];
+          final next = _nextStatuses(order.status);
           return Card(
             child: ListTile(
               leading: CircleAvatar(child: Text('${index + 1}')),
               title: Text(order.clientName),
-              subtitle: Text('${_date(order.orderDate)} • ${order.status}'),
+              subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text('${_date(order.orderDate)} • ${_statusLabel(order.status)}'),
+                if (next.isNotEmpty) ...[
+                  const SizedBox(height: 8),
+                  Wrap(spacing: 8, runSpacing: 6, children: next.map((status) => OutlinedButton(
+                    onPressed: () => _changeStatus(order, status),
+                    child: Text(_statusLabel(status)),
+                  )).toList()),
+                ],
+              ]),
               trailing: Text(order.totalAmount.toStringAsFixed(2), style: const TextStyle(fontWeight: FontWeight.w700)),
+              isThreeLine: next.isNotEmpty,
             ),
           );
         },
