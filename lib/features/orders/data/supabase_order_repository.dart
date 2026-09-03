@@ -60,7 +60,7 @@ class SupabaseOrderRepository {
     required String clientId,
     required DateTime orderDate,
     required List<OrderItem> items,
-    String status = 'completed',
+    String status = 'confirmed',
     String? notes,
   }) async {
     if (items.isEmpty) {
