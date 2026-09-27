@@ -214,7 +214,7 @@ class _ClientsPageState extends State<ClientsPage> {
         child: _loading
             ? const Center(child: CircularProgressIndicator())
             : _error != null
-                ? Center(child: Padding(padding: const EdgeInsets.all(24), child: Column(mainAxisSize: MainAxisSize.min, children: [const Icon(Icons.error_outline, size: 48), const SizedBox(height: 12), Text('Could not load clients'), const SizedBox(height: 8), Text(_error!, textAlign: TextAlign.center), const SizedBox(height: 16), FilledButton(onPressed: _loadClients, child: const Text('Retry'))]))
+                ? Center(child: Padding(padding: const EdgeInsets.all(24), child: Column(mainAxisSize: MainAxisSize.min, children: [const Icon(Icons.error_outline, size: 48), const SizedBox(height: 12), Text('Could not load clients'), const SizedBox(height: 8), Text(_error!, textAlign: TextAlign.center), const SizedBox(height: 16), FilledButton(onPressed: _loadClients, child: const Text('Retry'))])))
                 : Column(
                     children: [
                       Padding(padding: const EdgeInsets.fromLTRB(16, 16, 16, 8), child: TextField(controller: _searchController, decoration: const InputDecoration(prefixIcon: Icon(Icons.search), hintText: 'Search clients…', border: OutlineInputBorder(), suffixIcon: Icon(Icons.tune)))),
