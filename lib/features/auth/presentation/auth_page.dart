@@ -50,7 +50,7 @@ class _AuthPageState extends State<AuthPage> {
         );
         if (!mounted) return;
         if (response.session == null) {
-          _showMessage('Account created. Check your email to confirm the account, then return to ASAM.');
+          _showMessage('Account created. Check your email to confirm the account, then return to Wren.');
         }
       } else {
         await _client.auth.signInWithPassword(
@@ -70,7 +70,7 @@ class _AuthPageState extends State<AuthPage> {
   Future<void> _claimWorkspace() async {
     final user = _client.auth.currentUser;
     if (user == null || !user.isAnonymous) {
-      throw AuthException('The temporary ASAM workspace is no longer available.');
+      throw AuthException('The temporary Wren workspace is no longer available.');
     }
 
     await _client.auth.updateUser(
@@ -78,7 +78,7 @@ class _AuthPageState extends State<AuthPage> {
     );
 
     if (!mounted) return;
-    _showMessage('Confirmation email sent. Open it to secure this workspace. Your existing ASAM data will stay attached to this account.');
+    _showMessage('Confirmation email sent. Open it to secure this workspace. Your existing Wren data will stay attached to this account.');
   }
 
   void _showMessage(String message, {bool error = false}) {
@@ -91,12 +91,12 @@ class _AuthPageState extends State<AuthPage> {
   @override
   Widget build(BuildContext context) {
     final claim = widget.isAnonymous;
-    final title = claim ? 'Secure your ASAM workspace' : (_signUp ? 'Create your ASAM account' : 'Sign in to ASAM');
+    final title = claim ? 'Secure your Wren workspace' : (_signUp ? 'Create your Wren account' : 'Sign in to Wren');
     final subtitle = claim
         ? 'Your current workspace is temporary. Add your email so your products, clients, and orders remain tied to you.'
         : (_signUp
-            ? 'Create a permanent account for your ASAM workspace.'
-            : 'Use your ASAM account to access your data from this device or another device.');
+            ? 'Create a permanent account for your Wren workspace.'
+            : 'Use your Wren account to access your data from this device or another device.');
 
     return Scaffold(
       body: SafeArea(
@@ -189,7 +189,7 @@ class _AuthPageState extends State<AuthPage> {
                               _signUp = !_signUp;
                               _message = null;
                             }),
-                            child: Text(_signUp ? 'Already have an account? Sign in' : 'New to ASAM? Create an account'),
+                            child: Text(_signUp ? 'Already have an account? Sign in' : 'New to Wren? Create an account'),
                           ),
                         ],
                       ],
