@@ -26,6 +26,7 @@ class AsamTheme {
       useMaterial3: true,
       colorScheme: scheme,
       scaffoldBackgroundColor: canvas,
+      visualDensity: VisualDensity.standard,
       fontFamily: 'Arial',
       textTheme: const TextTheme(
         headlineLarge: TextStyle(fontSize: 36, height: 1.08, fontWeight: FontWeight.w800, color: ink),
@@ -40,9 +41,11 @@ class AsamTheme {
         elevation: 0,
         margin: EdgeInsets.zero,
         color: Colors.white,
+        shadowColor: Color(0x161F2D27),
+        surfaceTintColor: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: line),
+          side: const BorderSide(color: Color(0xFFD4DBD7), width: 1.1),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -62,7 +65,7 @@ class AsamTheme {
           borderSide: const BorderSide(color: navy, width: 1.5),
         ),
       ),
-      dividerTheme: const DividerThemeData(color: line, thickness: 1, space: 1),
+      dividerTheme: const DividerThemeData(color: Color(0xFFDDE2DF), thickness: 1.2, space: 1),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: navy,
