@@ -129,9 +129,9 @@ class _Header extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('WREN', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 1.5, color: AsamTheme.navy)),
+              Text('WREN', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w800, letterSpacing: 1.8, color: AsamTheme.navy)),
               SizedBox(height: 6),
-              Text('Good morning.', style: TextStyle(fontSize: 32, fontWeight: FontWeight.w700, color: AsamTheme.ink)),
+              Text('Good morning.', style: TextStyle(fontSize: 36, height: 1.08, fontWeight: FontWeight.w800, color: AsamTheme.ink)),
             ],
           ),
         ),
@@ -170,16 +170,16 @@ class _Hero extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Sales and marketing intelligence.', style: TextStyle(fontSize: 25, fontWeight: FontWeight.w700, color: Colors.white)),
+                Text('Sales and marketing intelligence.', style: TextStyle(fontSize: 27, height: 1.15, fontWeight: FontWeight.w800, color: Colors.white)),
                 SizedBox(height: 8),
-                Text('Keep track of what was supplied, what clients need next, and where action is required.', style: TextStyle(fontSize: 14, color: Color(0xFFE3EAF0))),
+                Text('Keep track of what was supplied, what clients need next, and where action is required.', style: TextStyle(fontSize: 15, height: 1.45, color: Color(0xFFE3EAF0))),
               ],
             ),
           ),
           const SizedBox(width: 20),
           FilledButton(
-            onPressed: null,
-            child: Text('+ New Order'),
+            onPressed: onNewOrder,
+            child: const Text('+ New Order'),
           ),
         ],
       ),
@@ -209,7 +209,7 @@ class _MetricGrid extends StatelessWidget {
       itemCount: cards.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: compact ? 2 : 4,
-        mainAxisExtent: 118,
+        mainAxisExtent: 126,
         crossAxisSpacing: 14,
         mainAxisSpacing: 14,
       ),
@@ -237,11 +237,11 @@ class _MetricCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(data.title, style: const TextStyle(fontSize: 12, color: AsamTheme.muted)),
+            Text(data.title, style: const TextStyle(fontSize: 13, color: AsamTheme.muted)),
             const Spacer(),
-            Text(data.value, style: const TextStyle(fontSize: 29, fontWeight: FontWeight.w700, color: AsamTheme.ink)),
+            Text(data.value, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w800, color: AsamTheme.ink)),
             const SizedBox(height: 4),
-            Text(data.detail, style: const TextStyle(fontSize: 12, color: AsamTheme.ink)),
+            Text(data.detail, style: const TextStyle(fontSize: 13, color: AsamTheme.ink)),
           ],
         ),
       ),
@@ -268,7 +268,7 @@ class _AttentionCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Expanded(child: Text('Attention required', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700))),
+                const Expanded(child: Text('Attention required', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800))),
                 TextButton(onPressed: onViewAll, child: const Text('View all')),
               ],
             ),
@@ -279,9 +279,9 @@ class _AttentionCard extends StatelessWidget {
                   contentPadding: EdgeInsets.zero,
                   dense: true,
                   leading: Container(width: 8, height: 8, decoration: BoxDecoration(color: item.$4, shape: BoxShape.circle)),
-                  title: Text(item.$1, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
-                  subtitle: Text(item.$2, style: const TextStyle(fontSize: 12, color: AsamTheme.muted)),
-                  trailing: Text(item.$3, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+                  title: Text(item.$1, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                  subtitle: Text(item.$2, style: const TextStyle(fontSize: 13, color: AsamTheme.muted)),
+                  trailing: Text(item.$3, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
                 ),
               ],
             )),
@@ -304,7 +304,7 @@ class _QuickActions extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Quick actions', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
+            const Text('Quick actions', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
             const SizedBox(height: 14),
             GridView.count(
               shrinkWrap: true,
@@ -346,9 +346,9 @@ class _ActionTile extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
+              Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
               const SizedBox(height: 4),
-              Text(subtitle, style: const TextStyle(fontSize: 11, color: AsamTheme.muted)),
+              Text(subtitle, style: const TextStyle(fontSize: 12, color: AsamTheme.muted)),
             ],
           ),
         ),
@@ -375,7 +375,7 @@ class _RecentActivity extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Expanded(child: Text('Recent activity', style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700))),
+                const Expanded(child: Text('Recent activity', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800))),
                 TextButton(onPressed: () {}, child: const Text('View activity')),
               ],
             ),
@@ -386,9 +386,9 @@ class _RecentActivity extends StatelessWidget {
                   contentPadding: EdgeInsets.zero,
                   dense: true,
                   leading: Container(width: 8, height: 8, decoration: const BoxDecoration(color: AsamTheme.navy, shape: BoxShape.circle)),
-                  title: Text(item.$1, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
-                  subtitle: Text(item.$2, style: const TextStyle(fontSize: 12, color: AsamTheme.muted)),
-                  trailing: Text(item.$3, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+                  title: Text(item.$1, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
+                  subtitle: Text(item.$2, style: const TextStyle(fontSize: 13, color: AsamTheme.muted)),
+                  trailing: Text(item.$3, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
                 ),
               ],
             )),
