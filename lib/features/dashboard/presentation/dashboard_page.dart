@@ -4,7 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../clients/data/supabase_client_repository.dart';
 import '../../orders/data/supabase_order_repository.dart';
 import '../../products/data/supabase_product_repository.dart';
-import '../../app/theme/app_theme.dart';
+import '../../../app/theme/app_theme.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key, required this.onNavigate});
