@@ -330,7 +330,7 @@ class _OrderDialogState extends State<_OrderDialog> {
               ..._lines.map((line) => ListTile(
                 contentPadding: EdgeInsets.zero,
                 title: Text(line.product.name),
-                subtitle: Text('${line.quantity:g} × ${(line.product.sellingPrice ?? 0).toStringAsFixed(2)}'),
+                subtitle: Text('${line.quantity} × ${(line.product.sellingPrice ?? 0).toStringAsFixed(2)}'),
                 trailing: Row(mainAxisSize: MainAxisSize.min, children: [
                   Text(line.total.toStringAsFixed(2)),
                   IconButton(onPressed: _saving ? null : () => setState(() => _lines.remove(line)), icon: const Icon(Icons.delete_outline)),
