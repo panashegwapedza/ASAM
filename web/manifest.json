@@ -1,11 +1,11 @@
 {
-    "name": "asam_dev",
-    "short_name": "asam_dev",
+    "name": "Wren",
+    "short_name": "Wren",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#F4F6F4",
+    "theme_color": "#294B68",
+    "description": "Wren sales and marketing intelligence workspace.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
