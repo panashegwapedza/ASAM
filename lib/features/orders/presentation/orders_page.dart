@@ -125,64 +125,105 @@ class _OrdersPageState extends State<OrdersPage> {
 
   @override
   Widget build(BuildContext context) {
+    final completed = _ordersList.where((o) => o.status == 'completed').length;
+    final open = _ordersList.where((o) => !['completed', 'cancelled'].contains(o.status)).length;
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Orders'),
-        actions: [
-          IconButton(onPressed: _loading ? null : _loadOrders, icon: const Icon(Icons.refresh)),
-        ],
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(30, 28, 30, 34),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1280),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      const Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Text('SALES OPERATIONS', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1.7, color: Color(0xFF294B68))),
+                        SizedBox(height: 7),
+                        Text('Orders', style: TextStyle(fontSize: 36, height: 1.05, fontWeight: FontWeight.w800, letterSpacing: -0.8)),
+                        SizedBox(height: 7),
+                        Text('Capture every order cleanly and keep fulfilment moving.', style: TextStyle(fontSize: 15, color: Color(0xFF69736D))),
+                      ])),
+                      const SizedBox(width: 18),
+                      IconButton(onPressed: _loading ? null : _loadOrders, icon: const Icon(Icons.refresh), tooltip: 'Refresh'),
+                      const SizedBox(width: 6),
+                      FilledButton.icon(onPressed: _addOrder, icon: const Icon(Icons.add_shopping_cart), label: const Text('Record Order')),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  Row(children: [
+                    _OrderStat(label: 'Total orders', value: '${_ordersList.length}', icon: Icons.receipt_long_outlined),
+                    const SizedBox(width: 12),
+                    _OrderStat(label: 'Open', value: '$open', icon: Icons.pending_actions_outlined),
+                    const SizedBox(width: 12),
+                    _OrderStat(label: 'Completed', value: '$completed', icon: Icons.task_alt_outlined),
+                  ]),
+                  const SizedBox(height: 20),
+                  Expanded(child: Card(child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 18, 20, 8),
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      const Text('Order activity', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
+                      const SizedBox(height: 5),
+                      const Text('Track customers, totals and fulfilment state from one operational view.', style: TextStyle(fontSize: 13, color: Color(0xFF69736D))),
+                      const SizedBox(height: 12),
+                      Expanded(child: _buildOrderList()),
+                    ]),
+                  ))),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _addOrder,
-        icon: const Icon(Icons.add_shopping_cart),
-        label: const Text('Record Order'),
-      ),
-      body: SafeArea(child: _body()),
     );
   }
 
-  Widget _body() {
+  Widget _buildOrderList() {
     if (_loading) return const Center(child: CircularProgressIndicator());
-    if (_error != null) {
-      return Center(child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          const Icon(Icons.error_outline, size: 48),
-          const SizedBox(height: 12),
-          Text(_error!, textAlign: TextAlign.center),
-          const SizedBox(height: 16),
-          FilledButton(onPressed: _loadOrders, child: const Text('Retry')),
-        ]),
-      ));
-    }
-    if (_ordersList.isEmpty) {
-      return const Center(child: Text('No orders yet.\nRecord the first customer order.', textAlign: TextAlign.center));
-    }
+    if (_error != null) return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
+      const Icon(Icons.error_outline_rounded, size: 44, color: Color(0xFFC45C5C)),
+      const SizedBox(height: 12),
+      Text(_error!, textAlign: TextAlign.center),
+      const SizedBox(height: 14),
+      FilledButton(onPressed: _loadOrders, child: const Text('Retry')),
+    ]));
+    if (_ordersList.isEmpty) return const Center(child: Text('No orders yet.\nRecord the first customer order.', textAlign: TextAlign.center, style: TextStyle(fontSize: 16, color: Color(0xFF69736D))));
+
     return RefreshIndicator(
       onRefresh: _loadOrders,
       child: ListView.separated(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.only(top: 6, bottom: 12),
         itemCount: _ordersList.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 8),
+        separatorBuilder: (_, __) => const SizedBox(height: 7),
         itemBuilder: (_, index) {
           final order = _ordersList[index];
           final next = _nextStatuses(order.status);
-          return Card(
-            child: ListTile(
-              leading: CircleAvatar(child: Text('${index + 1}')),
-              title: Text(order.clientName),
-              subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Text('${_date(order.orderDate)} • ${_statusLabel(order.status)}'),
-                if (next.isNotEmpty) ...[
-                  const SizedBox(height: 8),
-                  Wrap(spacing: 8, runSpacing: 6, children: next.map((status) => OutlinedButton(
-                    onPressed: () => _changeStatus(order, status),
-                    child: Text(_statusLabel(status)),
-                  )).toList()),
-                ],
+          final completed = order.status == 'completed';
+          final cancelled = order.status == 'cancelled';
+          final tone = cancelled ? const Color(0xFFC45C5C) : completed ? const Color(0xFF3A7A58) : const Color(0xFF294B68);
+          return Container(
+            decoration: BoxDecoration(color: const Color(0xFFF8FAF8), borderRadius: BorderRadius.circular(13), border: Border.all(color: const Color(0xFFE0E5E2))),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 7),
+              child: Row(children: [
+                Container(width: 46, height: 46, decoration: BoxDecoration(color: tone.withOpacity(.10), borderRadius: BorderRadius.circular(12)), child: Icon(Icons.receipt_long_outlined, color: tone)),
+                const SizedBox(width: 14),
+                Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(order.clientName, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
+                  const SizedBox(height: 4),
+                  Text('${_date(order.orderDate)} • ${_statusLabel(order.status)}', style: const TextStyle(fontSize: 13, color: Color(0xFF69736D))),
+                  if (next.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    Wrap(spacing: 7, runSpacing: 6, children: next.map((status) => OutlinedButton(onPressed: () => _changeStatus(order, status), child: Text(_statusLabel(status)))).toList()),
+                  ],
+                ])),
+                const SizedBox(width: 14),
+                Text(order.totalAmount.toStringAsFixed(2), style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
               ]),
-              trailing: Text(order.totalAmount.toStringAsFixed(2), style: const TextStyle(fontWeight: FontWeight.w700)),
-              isThreeLine: next.isNotEmpty,
             ),
           );
         },
@@ -191,7 +232,6 @@ class _OrdersPageState extends State<OrdersPage> {
   }
 
   String _date(DateTime date) => '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
-}
 
 class _OrderLine {
   _OrderLine(this.product, this.quantity);
