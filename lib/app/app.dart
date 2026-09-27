@@ -118,7 +118,7 @@ class _AsamShellState extends State<AsamShell> {
       body: Row(
         children: [
           SizedBox(
-            width: 244,
+            width: 256,
             child: _Sidebar(
               selectedIndex: _selectedIndex,
               labels: _labels,
@@ -176,11 +176,12 @@ class _Sidebar extends StatelessWidget {
                   child: ListTile(
                     selected: selectedIndex == index,
                     selectedTileColor: AsamTheme.selected,
+                    selectedColor: AsamTheme.navy,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                     leading: Icon(icons[index], size: 21, color: selectedIndex == index ? AsamTheme.navy : AsamTheme.muted),
                     title: Text(labels[index], style: TextStyle(fontSize: 16, fontWeight: selectedIndex == index ? FontWeight.w800 : FontWeight.w600, color: selectedIndex == index ? AsamTheme.navy : AsamTheme.muted)),
                     onTap: () => onSelected(index),
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
                   ),
                 ),
               ),
