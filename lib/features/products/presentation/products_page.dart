@@ -444,112 +444,130 @@ class _ProductsPageState extends State<ProductsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final active = _products.where((p) => p.active).length;
+    final categories = _products.map((p) => p.category).whereType<String>().where((v) => v.isNotEmpty).toSet().length;
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Products'),
-        actions: [
-          IconButton(
-            onPressed: _loading ? null : _loadProducts,
-            icon: const Icon(Icons.refresh),
-            tooltip: 'Refresh',
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _showAddProductDialog,
-        icon: const Icon(Icons.add),
-        label: const Text('Add Product'),
-      ),
-      body: SafeArea(child: _buildBody()),
-    );
-  }
-
-  Widget _buildBody() {
-    if (_loading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
-    if (_error != null) {
-      return Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 700),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.error_outline, size: 48),
-                const SizedBox(height: 16),
-                const Text(
-                  'Could not load products.',
-                  style: TextStyle(fontSize: 18),
-                ),
-                const SizedBox(height: 8),
-                Text(_error!, textAlign: TextAlign.center),
-                const SizedBox(height: 16),
-                FilledButton(
-                  onPressed: _loadProducts,
-                  child: const Text('Retry'),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    }
-
-    if (_products.isEmpty) {
-      return const Center(
-        child: Text(
-          'No products yet.\nAdd your first product.',
-          textAlign: TextAlign.center,
-        ),
-      );
-    }
-
-    return RefreshIndicator(
-      onRefresh: _loadProducts,
-      child: ListView.builder(
-        padding: const EdgeInsets.all(16),
-        itemCount: _products.length,
-        itemBuilder: (context, index) {
-          final product = _products[index];
-          final canOrder = product.active && product.sellingPrice != null;
-
-          return Card(
-            margin: const EdgeInsets.only(bottom: 12),
-            child: ListTile(
-              leading: CircleAvatar(
-                child: Text(
-                  product.name.isEmpty ? '?' : product.name[0].toUpperCase(),
-                ),
-              ),
-              title: Text(product.name),
-              subtitle: Text(
-                '${product.category ?? 'Uncategorised'} • '
-                '${product.unit} • Price: ${_price(product)}',
-              ),
-              trailing: Wrap(
-                spacing: 8,
-                crossAxisAlignment: WrapCrossAlignment.center,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(30, 28, 30, 34),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1280),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (canOrder)
-                    OutlinedButton.icon(
-                      onPressed: () => _quickOrder(product),
-                      icon: const Icon(Icons.shopping_cart_outlined),
-                      label: const Text('Order'),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      const Expanded(
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          Text('CATALOGUE', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1.7, color: Color(0xFF294B68))),
+                          SizedBox(height: 7),
+                          Text('Products', style: TextStyle(fontSize: 36, height: 1.05, fontWeight: FontWeight.w800, letterSpacing: -0.8)),
+                          SizedBox(height: 7),
+                          Text('Keep the catalogue clean, commercial and ready for the next order.', style: TextStyle(fontSize: 15, color: Color(0xFF69736D))),
+                        ]),
+                      ),
+                      const SizedBox(width: 18),
+                      IconButton(onPressed: _loading ? null : _loadProducts, icon: const Icon(Icons.refresh), tooltip: 'Refresh'),
+                      const SizedBox(width: 6),
+                      FilledButton.icon(onPressed: _showAddProductDialog, icon: const Icon(Icons.add), label: const Text('Add Product')),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  Row(children: [
+                    _ProductStat(label: 'Total products', value: '${_products.length}', icon: Icons.inventory_2_outlined),
+                    const SizedBox(width: 12),
+                    _ProductStat(label: 'Active', value: '$active', icon: Icons.check_circle_outline),
+                    const SizedBox(width: 12),
+                    _ProductStat(label: 'Categories', value: '$categories', icon: Icons.category_outlined),
+                  ]),
+                  const SizedBox(height: 20),
+                  Expanded(
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 18, 20, 8),
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          const Text('Product catalogue', style: TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
+                          const SizedBox(height: 5),
+                          const Text('Products are the commercial building blocks behind orders and client activity.', style: TextStyle(fontSize: 13, color: Color(0xFF69736D))),
+                          const SizedBox(height: 12),
+                          Expanded(child: _buildProductList()),
+                        ]),
+                      ),
                     ),
-                  Icon(
-                    product.active
-                        ? Icons.check_circle_outline
-                        : Icons.pause_circle_outline,
                   ),
                 ],
               ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProductList() {
+    if (_loading) return const Center(child: CircularProgressIndicator());
+    if (_error != null) return Center(child: Column(mainAxisSize: MainAxisSize.min, children: [
+      const Icon(Icons.error_outline_rounded, size: 44, color: Color(0xFFC45C5C)),
+      const SizedBox(height: 12),
+      const Text('Could not load products', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+      const SizedBox(height: 6),
+      Text(_error!, textAlign: TextAlign.center),
+      const SizedBox(height: 14),
+      FilledButton(onPressed: _loadProducts, child: const Text('Retry')),
+    ]));
+    if (_products.isEmpty) return const Center(child: Text('No products yet.\nAdd your first product.', textAlign: TextAlign.center, style: TextStyle(fontSize: 16, color: Color(0xFF69736D))));
+
+    return RefreshIndicator(
+      onRefresh: _loadProducts,
+      child: ListView.separated(
+        padding: const EdgeInsets.only(top: 6, bottom: 12),
+        itemCount: _products.length,
+        separatorBuilder: (_, __) => const SizedBox(height: 7),
+        itemBuilder: (context, index) {
+          final product = _products[index];
+          final canOrder = product.active && product.sellingPrice != null;
+          return Container(
+            decoration: BoxDecoration(color: const Color(0xFFF8FAF8), borderRadius: BorderRadius.circular(13), border: Border.all(color: const Color(0xFFE0E5E2))),
+            child: ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+              leading: Container(
+                width: 46, height: 46,
+                decoration: BoxDecoration(color: const Color(0xFFE8F0F5), borderRadius: BorderRadius.circular(12)),
+                child: Icon(Icons.inventory_2_outlined, color: const Color(0xFF294B68)),
+              ),
+              title: Text(product.name, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
+              subtitle: Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text('${product.category ?? 'Uncategorised'} • ${product.unit} • Price: ${_price(product)}', style: const TextStyle(fontSize: 13, color: Color(0xFF69736D))),
+              ),
+              trailing: Wrap(spacing: 8, crossAxisAlignment: WrapCrossAlignment.center, children: [
+                if (canOrder) OutlinedButton.icon(onPressed: () => _quickOrder(product), icon: const Icon(Icons.shopping_cart_outlined, size: 18), label: const Text('Order')),
+                Icon(product.active ? Icons.check_circle_outline : Icons.pause_circle_outline, color: product.active ? const Color(0xFF3A7A58) : const Color(0xFF69736D)),
+              ]),
             ),
           );
         },
       ),
     );
   }
+}
+
+class _ProductStat extends StatelessWidget {
+  const _ProductStat({required this.label, required this.value, required this.icon});
+  final String label;
+  final String value;
+  final IconData icon;
+  @override
+  Widget build(BuildContext context) => Expanded(child: Card(child: Padding(padding: const EdgeInsets.all(18), child: Row(children: [
+    Container(padding: const EdgeInsets.all(11), decoration: BoxDecoration(color: const Color(0xFFE5EEF4), borderRadius: BorderRadius.circular(12)), child: Icon(icon, color: const Color(0xFF294B68), size: 23)),
+    const SizedBox(width: 13),
+    Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(label, style: const TextStyle(fontSize: 13, color: Color(0xFF69736D), fontWeight: FontWeight.w600)),
+      const SizedBox(height: 3),
+      Text(value, style: const TextStyle(fontSize: 25, fontWeight: FontWeight.w800)),
+    ]),
+  ])));
 }
