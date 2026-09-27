@@ -63,15 +63,15 @@ class _DashboardPageState extends State<DashboardPage> {
       onRefresh: _loadSummary,
       child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: EdgeInsets.fromLTRB(compact ? 20 : 36, 32, compact ? 20 : 36, 40),
+        padding: EdgeInsets.fromLTRB(compact ? 18 : 34, compact ? 24 : 30, compact ? 18 : 34, 44),
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 1280),
+            constraints: const BoxConstraints(maxWidth: 1320),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _Header(onSearch: (_) {}, compact: compact),
-                const SizedBox(height: 28),
+                const SizedBox(height: 24),
                 _Hero(onNewOrder: () => widget.onNavigate(3)),
                 const SizedBox(height: 20),
                 _MetricGrid(
@@ -159,7 +159,7 @@ class _Hero extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(28, 26, 26, 26),
+      padding: const EdgeInsets.fromLTRB(30, 28, 26, 28),
       decoration: BoxDecoration(
         color: AsamTheme.navy,
         borderRadius: BorderRadius.circular(18),
@@ -170,9 +170,9 @@ class _Hero extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Sales and marketing intelligence.', style: TextStyle(fontSize: 27, height: 1.15, fontWeight: FontWeight.w800, color: Colors.white)),
+                Text('Sales and marketing intelligence.', style: TextStyle(fontSize: 28, height: 1.12, fontWeight: FontWeight.w800, letterSpacing: -0.4, color: Colors.white)),
                 SizedBox(height: 8),
-                Text('Keep track of what was supplied, what clients need next, and where action is required.', style: TextStyle(fontSize: 15, height: 1.45, color: Color(0xFFE3EAF0))),
+                Text('Keep track of what was supplied, what clients need next, and where action is required.', style: TextStyle(fontSize: 15, height: 1.5, color: Color(0xFFE3EAF0))),
               ],
             ),
           ),
@@ -209,7 +209,7 @@ class _MetricGrid extends StatelessWidget {
       itemCount: cards.length,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: compact ? 2 : 4,
-        mainAxisExtent: 126,
+        mainAxisExtent: 138,
         crossAxisSpacing: 14,
         mainAxisSpacing: 14,
       ),
@@ -232,11 +232,20 @@ class _MetricCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(18, 16, 18, 14),
+      elevation: 0,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFD4DBD7), width: 1.2),
+          boxShadow: const [BoxShadow(color: Color(0x0D1F2D27), blurRadius: 14, offset: Offset(0, 6))],
+        ),
+        padding: const EdgeInsets.fromLTRB(19, 17, 19, 15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Container(width: 30, height: 3, decoration: BoxDecoration(color: AsamTheme.gold, borderRadius: BorderRadius.circular(4))),
+            const SizedBox(height: 9),
             Text(data.title, style: const TextStyle(fontSize: 13, color: AsamTheme.muted)),
             const Spacer(),
             Text(data.value, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w800, color: AsamTheme.ink)),
@@ -262,7 +271,14 @@ class _AttentionCard extends StatelessWidget {
       ('Stock movement', 'High-frequency product showing increased demand', '+18%', Color(0xFF3A6488)),
     ];
     return Card(
-      child: Padding(
+      elevation: 0,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFD4DBD7), width: 1.2),
+          boxShadow: const [BoxShadow(color: Color(0x0D1F2D27), blurRadius: 16, offset: Offset(0, 7))],
+        ),
         padding: const EdgeInsets.fromLTRB(20, 18, 20, 8),
         child: Column(
           children: [
@@ -299,7 +315,14 @@ class _QuickActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Padding(
+      elevation: 0,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFD4DBD7), width: 1.2),
+          boxShadow: const [BoxShadow(color: Color(0x0D1F2D27), blurRadius: 16, offset: Offset(0, 7))],
+        ),
         padding: const EdgeInsets.fromLTRB(20, 18, 20, 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -336,13 +359,13 @@ class _ActionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: const Color(0xFFF0F2F0),
-      borderRadius: BorderRadius.circular(10),
+      color: const Color(0xFFF5F7F5),
+      borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(10),
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(14, 12, 10, 10),
+          padding: const EdgeInsets.fromLTRB(15, 14, 12, 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
