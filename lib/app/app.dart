@@ -154,7 +154,7 @@ class _Sidebar extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: RichText(
                 text: const TextSpan(
-                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.w800, color: AsamTheme.navy, letterSpacing: -1.5),
+                  style: TextStyle(fontSize: 29, fontWeight: FontWeight.w800, color: AsamTheme.navy, letterSpacing: -1.5),
                   children: [
                     TextSpan(text: 'wren'),
                     TextSpan(text: '•', style: TextStyle(color: AsamTheme.gold, fontSize: 18)),
@@ -162,10 +162,10 @@ class _Sidebar extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 34),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 12),
-              child: Text('WORKSPACE', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, letterSpacing: 1.5, color: AsamTheme.muted)),
+              child: Text('WORKSPACE', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, letterSpacing: 1.5, color: AsamTheme.muted)),
             ),
             const SizedBox(height: 10),
             Expanded(
@@ -177,8 +177,8 @@ class _Sidebar extends StatelessWidget {
                     selected: selectedIndex == index,
                     selectedTileColor: AsamTheme.selected,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                    leading: Icon(icons[index], size: 19, color: selectedIndex == index ? AsamTheme.navy : AsamTheme.muted),
-                    title: Text(labels[index], style: TextStyle(fontSize: 15, fontWeight: selectedIndex == index ? FontWeight.w700 : FontWeight.w500, color: selectedIndex == index ? AsamTheme.navy : AsamTheme.muted)),
+                    leading: Icon(icons[index], size: 21, color: selectedIndex == index ? AsamTheme.navy : AsamTheme.muted),
+                    title: Text(labels[index], style: TextStyle(fontSize: 16, fontWeight: selectedIndex == index ? FontWeight.w800 : FontWeight.w600, color: selectedIndex == index ? AsamTheme.navy : AsamTheme.muted)),
                     onTap: () => onSelected(index),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12),
                   ),
@@ -188,11 +188,11 @@ class _Sidebar extends StatelessWidget {
             const Divider(),
             const Padding(
               padding: EdgeInsets.fromLTRB(12, 14, 12, 2),
-              child: Text('Sales Manager', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AsamTheme.ink)),
+              child: Text('Sales Manager', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: AsamTheme.ink)),
             ),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 12),
-              child: Text('Wren workspace', style: TextStyle(fontSize: 12, color: AsamTheme.muted)),
+              child: Text('Wren workspace', style: TextStyle(fontSize: 13, color: AsamTheme.muted)),
             ),
           ],
         ),
