@@ -118,7 +118,7 @@ class _AsamShellState extends State<AsamShell> {
       body: Row(
         children: [
           SizedBox(
-            width: 256,
+            width: 270,
             child: _Sidebar(
               selectedIndex: _selectedIndex,
               labels: _labels,
@@ -203,44 +203,135 @@ class _Sidebar extends StatelessWidget {
 }
 
 class _WorkspacePage extends StatelessWidget {
-  const _WorkspacePage({required this.title, required this.eyebrow, required this.description});
+  const _WorkspacePage({
+    required this.title,
+    required this.eyebrow,
+    required this.description,
+  });
+
   final String title;
   final String eyebrow;
   final String description;
 
   @override
   Widget build(BuildContext context) {
+    final isAlerts = title == 'Alerts';
+    final isMarketing = title == 'Marketing';
+    final isIntelligence = title == 'Intelligence';
+
+    final accent = isAlerts
+        ? const Color(0xFFC45C5C)
+        : isMarketing
+            ? AsamTheme.gold
+            : AsamTheme.navy;
+
+    final stats = isAlerts
+        ? const [('Open signals', '9'), ('Due today', '3'), ('Escalated', '1')]
+        : isMarketing
+            ? const [('Due today', '3'), ('Scheduled', '7'), ('Completed', '12')]
+            : const [('Predictions', '9'), ('Recommendations', '6'), ('Signals', '14')];
+
+    final actions = isAlerts
+        ? const ['Review urgent signals', 'Open reorder opportunities', 'Resolve fulfilment exceptions']
+        : isMarketing
+            ? const ['Plan client follow-ups', 'Review campaign activity', 'Log completed contact']
+            : const ['Review predictions', 'Explore recommendations', 'Inspect supporting evidence'];
+
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(36),
+      padding: const EdgeInsets.fromLTRB(34, 30, 34, 44),
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1120),
+          constraints: const BoxConstraints(maxWidth: 1320),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(eyebrow, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 1.4, color: AsamTheme.navy)),
+              Text(eyebrow, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, letterSpacing: 1.7, color: AsamTheme.navy)),
+              const SizedBox(height: 7),
+              Text(title, style: const TextStyle(fontSize: 36, height: 1.05, fontWeight: FontWeight.w800, letterSpacing: -0.8)),
               const SizedBox(height: 8),
-              Text(title, style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w700)),
-              const SizedBox(height: 8),
-              Text(description, style: const TextStyle(color: AsamTheme.muted)),
-              const SizedBox(height: 28),
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(28),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(color: AsamTheme.selected, borderRadius: BorderRadius.circular(12)),
-                        child: const Icon(Icons.construction_outlined, color: AsamTheme.navy),
+              Text(description, style: const TextStyle(fontSize: 15, height: 1.5, color: AsamTheme.muted)),
+              const SizedBox(height: 26),
+              Row(
+                children: stats.map((s) => Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: s == stats.last ? 0 : 14),
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(width: 28, height: 3, decoration: BoxDecoration(color: accent, borderRadius: BorderRadius.circular(3))),
+                            const SizedBox(height: 12),
+                            Text(s.$1, style: const TextStyle(fontSize: 13, color: AsamTheme.muted, fontWeight: FontWeight.w600)),
+                            const SizedBox(height: 5),
+                            Text(s.$2, style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w800, color: AsamTheme.ink)),
+                          ],
+                        ),
                       ),
-                      const SizedBox(width: 16),
-                      const Expanded(
-                        child: Text('This workspace is now part of the Wren navigation foundation. Its workflows will be built on the same visual language and Supabase data model.'),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                )).toList(),
+              ),
+              const SizedBox(height: 22),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 5,
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(22, 20, 22, 12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(isAlerts ? 'Needs attention' : isMarketing ? 'Today’s workflow' : 'Decision workspace', style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
+                            const SizedBox(height: 8),
+                            Text(isAlerts ? 'Signals are organised by urgency so action can happen quickly.' : isMarketing ? 'Keep client contact deliberate, visible and measurable.' : 'Use operational evidence to understand what needs attention next.', style: const TextStyle(fontSize: 14, color: AsamTheme.muted)),
+                            const SizedBox(height: 12),
+                            ...actions.map((action) => ListTile(
+                              contentPadding: const EdgeInsets.symmetric(vertical: 4),
+                              leading: Container(width: 10, height: 10, decoration: BoxDecoration(color: accent, shape: BoxShape.circle)),
+                              title: Text(action, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
+                              trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 15, color: AsamTheme.muted),
+                            )),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 18),
+                  Expanded(
+                    flex: 3,
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(22),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Wren intelligence', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+                            const SizedBox(height: 12),
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(color: AsamTheme.selected, borderRadius: BorderRadius.circular(14)),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Icon(isAlerts ? Icons.notifications_active_outlined : isMarketing ? Icons.campaign_outlined : Icons.auto_awesome_outlined, color: accent, size: 28),
+                                  const SizedBox(height: 14),
+                                  Text(isAlerts ? 'Act on signals' : isMarketing ? 'Turn insight into contact' : 'Turn history into action', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800)),
+                                  const SizedBox(height: 6),
+                                  const Text('The workspace will connect operational data, signals and actions as these workflows are built.', style: TextStyle(fontSize: 13, height: 1.45, color: AsamTheme.muted)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
