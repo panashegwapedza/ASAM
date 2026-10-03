@@ -80,7 +80,7 @@ function MarketingWorkspace({session,onRefresh}:{session:any;onRefresh:()=>Promi
   supabase.from('clients').select('id,company_name,name,client_type,status').eq('status','active').order('company_name'),
   supabase.from('products').select('id,name,sku,active').eq('active',true).order('name'),
   supabase.from('orders').select('id,order_number,order_date,total_amount,client_id').order('created_at',{ascending:false}).limit(300)
- ]);setCampaigns(ca.data||[]);setActivities(ac.data||[]);setOutcomes(ou.data||[]);setClients(cl.data||[]);setProducts(pr.data||[]);setOrders(or.data||[]);const e=[ca,ac,ou,cl,pr,or].find(x=>x.error);if(e)setMessage(e.error.message);setBusy(false)}
+ ]);setCampaigns(ca.data||[]);setActivities(ac.data||[]);setOutcomes(ou.data||[]);setClients(cl.data||[]);setProducts(pr.data||[]);setOrders(or.data||[]);const e=[ca,ac,ou,cl,pr,or].find(x=>x.error);if(e?.error)setMessage(e.error.message);setBusy(false)}
  useEffect(()=>{load()},[session]);
  const saveCampaign=async()=>{if(!campaignForm.name?.trim()){setMessage('Enter a campaign name.');return}setBusy(true);setMessage('');const user=(await supabase.auth.getUser()).data.user;if(!user){setMessage('Session expired.');setBusy(false);return}
   const {data,error}=await supabase.from('campaigns').insert({owner_id:user.id,name:campaignForm.name.trim(),objective:campaignForm.objective?.trim()||null,campaign_type:campaignForm.campaign_type||null,expected_outcome:campaignForm.expected_outcome?.trim()||null,budget:campaignForm.budget?Number(campaignForm.budget):null,start_date:campaignForm.start_date||null,end_date:campaignForm.end_date||null,status:'draft'}).select().single();
