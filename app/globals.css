@@ -94,3 +94,5 @@ header h1{font-size:28px;margin:7px 0 0;letter-spacing:-.7px;font-weight:900}
 .orderStatusButton{min-width:105px;font-weight:900}.orderStatusButton:disabled{cursor:default;opacity:.8}
 
 .orderCancelButton{color:#a53b3b!important;border-color:#e7c6c6!important;background:#fff7f7!important}.orderCancelButton:hover{background:#fdeeee!important}.rowActions{flex-wrap:wrap;justify-content:flex-end}
+
+.campaignTargets{margin-top:4px}.campaignTargetList{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-height:220px;overflow:auto;padding:2px}.campaignTarget{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:#fbfcfc;border-radius:11px;padding:10px 11px;cursor:pointer}.campaignTarget:has(input:checked){border-color:#8ea9bb;background:#f1f6f8}.campaignTarget input{accent-color:var(--navy)}.campaignTarget span{display:flex;flex-direction:column;gap:2px}.campaignTarget strong{font-size:12px;color:var(--navy)}.campaignTarget small{font-size:10px;color:var(--muted);font-weight:700}.campaignTargetList .detailEmpty{grid-column:1/-1}
