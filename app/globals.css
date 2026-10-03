@@ -110,3 +110,10 @@ header h1{font-size:28px;margin:7px 0 0;letter-spacing:-.7px;font-weight:900}
 
 .alertClickable{cursor:pointer}.alertClickable:hover{background:#f7f9fc}.alertDetailModal{max-width:620px}.alertDetailBody{display:grid;gap:14px}.alertDetailBody>div{display:flex;justify-content:space-between;gap:20px;padding:12px 0;border-bottom:1px solid #e6ebf2}.alertDetailBody p{margin:0;line-height:1.65;color:#4c5b70}.alertDetailMeta{display:flex;align-items:center;justify-content:space-between}.dangerBadge,.statusBadge{display:inline-flex;padding:6px 10px;border-radius:999px;font-size:11px;font-weight:800;text-transform:uppercase}.dangerBadge{background:#fff0f0;color:#c53535}.statusBadge{background:#eef4ff;color:#315b9a}
 .alertDetailPage{max-width:920px}.alertDetailTop{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-bottom:22px;border-bottom:1px solid #e6ebf2}.alertDetailGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;padding:26px 0}.alertDetailGrid>div{display:grid;gap:7px}.alertDetailGrid small{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#7b8798}.alertDetailGrid strong{font-size:16px;color:#1e2b40}.alertDetailGrid p{margin:0;line-height:1.7;color:#4c5b70}.alertDetailPage .modalActions{justify-content:flex-end}@media(max-width:720px){.alertDetailGrid{grid-template-columns:1fr}}
+
+.marketingTaskActions{display:flex;align-items:center;gap:10px}
+.marketingTaskActions input{width:18px;height:18px;accent-color:#1e2b40}
+.feedbackContext{display:grid;gap:5px;padding:14px 16px;margin-bottom:18px;background:#f6f8fb;border:1px solid #e3e8ef;border-radius:12px}
+.feedbackContext strong{font-size:15px;color:#1e2b40}
+.feedbackContext span{font-size:13px;color:#66758a;line-height:1.5}
+.marketingFollow.overdue{border-left:3px solid #d97706}
