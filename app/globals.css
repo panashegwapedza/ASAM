@@ -92,3 +92,5 @@ header h1{font-size:28px;margin:7px 0 0;letter-spacing:-.7px;font-weight:900}
 @media(max-width:700px){.orderLine{grid-template-columns:1fr 1fr}.orderPriceInput{width:100%}.orderSavePrice{grid-column:1/-1}}
 
 .orderStatusButton{min-width:105px;font-weight:900}.orderStatusButton:disabled{cursor:default;opacity:.8}
+
+.orderCancelButton{color:#a53b3b!important;border-color:#e7c6c6!important;background:#fff7f7!important}.orderCancelButton:hover{background:#fdeeee!important}.rowActions{flex-wrap:wrap;justify-content:flex-end}
