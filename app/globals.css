@@ -117,3 +117,5 @@ header h1{font-size:28px;margin:7px 0 0;letter-spacing:-.7px;font-weight:900}
 .feedbackContext strong{font-size:15px;color:#1e2b40}
 .feedbackContext span{font-size:13px;color:#66758a;line-height:1.5}
 .marketingFollow.overdue{border-left:3px solid #d97706}
+
+.metricClickable{cursor:pointer;transition:transform .15s ease,box-shadow .15s ease}.metricClickable:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(24,43,64,.12)}.metricClickable:focus-visible{outline:2px solid #274c6d;outline-offset:2px}
