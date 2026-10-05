@@ -134,13 +134,24 @@ function MarketingWorkspace({session,onRefresh,onCreateReorder}:{session:any;onR
  const openFeedback=(task:any)=>{const f=productForecasts.find(x=>x.id===task.source_id);const d=f?.expected_reorder_at?new Date(f.expected_reorder_at):null;setFeedbackTask(task);setFeedbackForm({expected_reorder_at:d?new Date(d.getTime()-2*86400000).toISOString().slice(0,10):'',expected_quantity:f?.avg_order_quantity?String(Number(f.avg_order_quantity).toFixed(0)):'',outcome:'Reorder',notes:''})};
  const saveFeedback=async()=>{if(!feedbackTask){return}setBusy(true);setMessage('');const f=productForecasts.find(x=>x.id===feedbackTask.source_id);if(!f){setMessage('The reorder forecast for this follow-up could not be found.');setBusy(false);return}const user=(await supabase.auth.getUser()).data.user;if(!user){setMessage('Session expired.');setBusy(false);return}
   const expected=feedbackForm.expected_reorder_at?new Date(feedbackForm.expected_reorder_at+'T12:00:00').toISOString():null;
-  const {data,error}=await supabase.from('client_reorder_followup_feedback').insert({owner_id:user.id,client_id:feedbackTask.client_id,product_id:f.product_id,forecast_id:f.id,weekly_task_id:feedbackTask.id,outcome:feedbackForm.outcome||'Visited',expected_reorder_at:expected,expected_quantity:feedbackForm.expected_quantity?Number(feedbackForm.expected_quantity):null,notes:feedbackForm.notes?.trim()||null}).select().single();
-  if(error){setMessage(error.message);setBusy(false);return}
-  const rpc=await supabase.rpc('wren_apply_reorder_feedback',{p_feedback_id:data.id,p_expected_reorder_at:expected,p_expected_quantity:feedbackForm.expected_quantity?Number(feedbackForm.expected_quantity):null,p_notes:feedbackForm.notes?.trim()||null});
-  if(rpc.error){setMessage(rpc.error.message);setBusy(false);return}
+  const outcome=feedbackForm.outcome||'Reorder';
+  const quantity=feedbackForm.expected_quantity?Number(feedbackForm.expected_quantity):null;
+  const {data,error}=await supabase.from('client_reorder_followup_feedback').insert({owner_id:user.id,client_id:feedbackTask.client_id,product_id:f.product_id,forecast_id:f.id,weekly_task_id:feedbackTask.id,outcome,expected_reorder_at:expected,expected_quantity:quantity,notes:feedbackForm.notes?.trim()||null}).select().single();
+  if(error){setMessage('Could not save the visit: '+error.message);setBusy(false);return}
+  const rpc=await supabase.rpc('wren_apply_reorder_feedback',{p_feedback_id:data.id,p_expected_reorder_at:expected,p_expected_quantity:quantity,p_notes:feedbackForm.notes?.trim()||null});
   const done=await supabase.from('marketing_weekly_tasks').update({completed:true,updated_at:new Date().toISOString()}).eq('id',feedbackTask.id);
-  if(done.error)setMessage(done.error.message);else setMessage('Visit recorded. Wren updated the expected reorder, next follow-up and alert.');
-  setFeedbackTask(null);setFeedbackForm({});await load();await onRefresh();setBusy(false)
+  if(done.error){setMessage('Visit was saved, but the follow-up could not be completed: '+done.error.message);setBusy(false);return}
+  if(rpc.error){
+    setMessage('Visit saved. Wren could not update the reorder intelligence: '+rpc.error.message);
+  }else{
+    setMessage('Visit recorded. Wren updated the expected reorder, next follow-up and alert.');
+  }
+  const shouldCreateOrder=outcome==='Reorder'||outcome==='Likely reorder';
+  const orderPrefill={client_id:feedbackTask.client_id,product_id:f.product_id,quantity:quantity&&quantity>0?String(quantity):'1'};
+  setFeedbackTask(null);setFeedbackForm({});
+  await load();await onRefresh();
+  setBusy(false);
+  if(shouldCreateOrder) onCreateReorder(orderPrefill)
  };
  const due=outcomes.filter(x=>x.next_follow_up_at).sort((a,b)=>new Date(a.next_follow_up_at).getTime()-new Date(b.next_follow_up_at).getTime());
  const today=new Date();today.setHours(0,0,0,0);
